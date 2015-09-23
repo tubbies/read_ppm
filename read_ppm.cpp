@@ -97,35 +97,43 @@ ppm_img read_ppm(FILE* fp)
     pixel = (int *) calloc(width*height,sizeof(int));
     my_ppm_img.pixel = pixel;
 
-    for(idx=0;idx<(width*height);idx++)
+
+    int bb=0;
+    while (fgets(str,500,fp) != NULL)
     {
-        if(num_ch == 0)
-            break;
-        else if (num_ch == 1)
-        {
-            ch = fscanf(fp,"%d",(my_ppm_img.pixel)++);
-            if (ch != 1)
-            {
-            //  printf("END - %d\n",idx);
+        strcpy(str,remove_heading_blank(str));
+        if(isspace(str[0])) // detect blank line
+            continue;
+        else if (str[0] == '#') // detect comment
+            continue;
+        else
+        { 
+            bb++;
+            if(num_ch ==0)
                 break;
+            else if (num_ch == 1)
+            {
+                ch = sscanf(str,"%d",(my_ppm_img.pixel)++);
+                if (ch != 1)
+                {
+                    break;
+                }
+            }
+            else if (num_ch == 3)
+            {
+                ch = sscanf(str,"%d %d %d",(my_ppm_img.pixel)+0
+                                          ,(my_ppm_img.pixel)+1
+                                          ,(my_ppm_img.pixel)+2);
+                if (ch != 3)
+                {
+                    break;
+                }
             }
         }
-        else if (num_ch == 3)
-        {
-            ch = fscanf(fp,"%d %d %d",(my_ppm_img.pixel)+0
-                                     ,(my_ppm_img.pixel)+1
-                                     ,(my_ppm_img.pixel)+2);
-            if (ch != 3)
-            {
-            //  printf("END - %d\n",idx);
-                break;
-            }
-        }
-
-
     }
-
-    printf("%d\n",my_ppm_img.num_ch);
+    //printf("%d\n",my_ppm_img.num_ch);
+    //printf("%d * %d = %d\n",my_ppm_img.width,my_ppm_img.height,my_ppm_img.width*my_ppm_img.height);
+    //printf("%d\n",bb);
 
 
     return my_ppm_img;
@@ -158,5 +166,3 @@ int   define_ppm_format(char *str)
 void  alloc_ppm_pixel(int* pixel, int width, int height)
 {/*{{{*/
 }/*}}}*/
-
-
